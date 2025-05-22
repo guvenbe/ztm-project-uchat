@@ -5,5 +5,10 @@ use fermi::use_init_atom_root;
 
 pub fn App(cx: Scope) -> Element {
     use_init_atom_root(cx);
-    None
+    cx.render(rsx! {
+        div {
+            class: "p-4 text-xl text-blue-600",
+            h1 { "hello, world" }
+        }
+    })
 }
