@@ -254,3 +254,10 @@ this, two changes need to be made:
    `#[nutype(validate(not_empty, ...))]`
 2. In all `impl` blocks where we create `fn formatted_error`, change
    `StructError::Missing` to `StructError::Empty`.
+   cargo init --lib shared/domain --name uchat_domain 
+3.  cargo add -p uchat_domain once_cell@1 regex@1 thiserror@1
+4. cargo add -p uchat_domain nutype -F serde
+5.cargo add -p uchat_domain serde -F derive   
+5.cargo add -p uchat_domain uuid -F v4,serde,js  
+5.cargo add -p uchat_domain diesel -F postres,uuid,chrono,serde_json,postgres,postgres_backend,i-implement-a-third-party-backend-and-opt-into-breaking-changes   
+
