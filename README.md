@@ -261,3 +261,10 @@ this, two changes need to be made:
 5.cargo add -p uchat_domain uuid -F v4,serde,js  
 5.cargo add -p uchat_domain diesel -F postres,uuid,chrono,serde_json,postgres,postgres_backend,i-implement-a-third-party-backend-and-opt-into-breaking-changes   
 
+create user uchat;
+alter user uchat with password 'uchat';
+
+CREATE database uchat owner uchat;
+
+grant all privileges on database uchat to uchat;
+ALTER USER uchat WITH SUPERUSER;
