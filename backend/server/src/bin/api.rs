@@ -63,7 +63,7 @@ async fn run() -> Result<()> {
     info!(target: "uchat_server", database_url = args.database_url, "connection to database");
     let db_pool = uchat_query::AsyncConnectionPool::new(&args.database_url)
         .await
-        .with_suggestion(||"check database URL")
+        .with_suggestion(|| "check database URL")
         .with_suggestion(|| "ensure correct database access rights")
         .with_suggestion(|| "make sure database exists")?;
 
@@ -76,7 +76,7 @@ async fn run() -> Result<()> {
     let router = uchat_server::router::new_router(state);
     let server = axum::Server::try_bind(&args.bind)
         .wrap_err_with(|| "server initialization error")
-        .with_suggestion(||"check bind address")
+        .with_suggestion(|| "check bind address")
         .with_suggestion(|| "check if other services are using the same port")?;
     let server = server.serve((router.into_make_service()));
 

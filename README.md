@@ -268,3 +268,15 @@ CREATE database uchat owner uchat;
 
 grant all privileges on database uchat to uchat;
 ALTER USER uchat WITH SUPERUSER;
+
+Add new crate
+
+cargo init --lib shared/endpoint --name uchat_endpoint
+
+cargo add -p uchat_endpoint chrono -F serde
+
+cargo add -p uchat_endpoint load-dotenv
+
+cargo add -p uchat_endpoint thiserror  
+
+cargo add -p uchat_endpoint serde -F derive  

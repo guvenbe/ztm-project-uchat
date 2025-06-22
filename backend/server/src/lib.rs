@@ -12,7 +12,7 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub async fn connect(&self) -> Result<AsyncConnection, QueryError>{
+    pub async fn connect(&self) -> Result<AsyncConnection, QueryError> {
         self.db_pool.get().await
     }
 }
