@@ -26,7 +26,7 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Command {
-    ///generate a session sining key
+    ///generate a session signing key
     GenKey,
 }
 

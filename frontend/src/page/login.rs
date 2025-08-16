@@ -2,13 +2,13 @@
 
 use dioxus::prelude::*;
 use uchat_domain::UserFacingError;
+
 use crate::{
-    elements::{keyed_notification_box::KeyedNotifications},
+    elements::{keyed_notification_box::KeyedNotifications, KeyedNotificationBox},
     fetch_json,
     prelude::*,
     util::ApiClient,
 };
-use crate::elements::keyed_notification_box::KeyedNotificationBox;
 
 pub struct PageState {
     username: UseState<String>,
@@ -82,16 +82,16 @@ pub fn UsernameInput<'a>(
     })
 }
 
-pub fn Register(cx: Scope) -> Element {
+pub fn Login(cx: Scope) -> Element {
     let api_client = ApiClient::global();
     let page_state = PageState::new(cx);
     let page_state = use_ref(cx, || page_state);
 
     let form_onsubmit = async_handler!(&cx, [api_client, page_state], move |_| async move {
-        use uchat_endpoint::user::endpoint::{CreateUser, CreateUserOk};
+        use uchat_endpoint::user::endpoint::{Login, LoginOk};
         let request_data = {
             use uchat_domain::{Password, Username};
-            CreateUser {
+            Login {
                 username: Username::new(
                     page_state.with(|state| state.username.current().to_string()),
                 )
@@ -102,9 +102,15 @@ pub fn Register(cx: Scope) -> Element {
                 .unwrap(),
             }
         };
-        let response = fetch_json!(<CreateUserOk>, api_client, request_data);
+        let response = fetch_json!(<LoginOk>, api_client, request_data);
         match response {
-            Ok(res) => (),
+            Ok(res) => {
+                crate::util::cookie::set_session(
+                    res.session_signature,
+                    res.session_id,
+                    res.session_expires,
+                );
+            }
             Err(e) => (),
         }
     });
@@ -155,7 +161,7 @@ pub fn Register(cx: Scope) -> Element {
                 class: "btn {submit_btn_style}",
                 r#type: "submit",
                 disabled: !page_state.with(|state| state.can_submit()),
-                "Signup"
+                "Login"
             }
         }
     })

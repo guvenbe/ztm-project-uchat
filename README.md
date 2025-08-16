@@ -261,6 +261,8 @@ this, two changes need to be made:
 5.cargo add -p uchat_domain uuid -F v4,serde,js  
 5.cargo add -p uchat_domain diesel -F postres,uuid,chrono,serde_json,postgres,postgres_backend,i-implement-a-third-party-backend-and-opt-into-breaking-changes   
 
+
+PGPASSWORD=uchat psql -h 127.0.0.1 -p 5432 -U uchat -d uchat
 create user uchat;
 alter user uchat with password 'uchat';
 
@@ -280,3 +282,18 @@ cargo add -p uchat_endpoint load-dotenv
 cargo add -p uchat_endpoint thiserror  
 
 cargo add -p uchat_endpoint serde -F derive  
+
+cargo add -p uchat_endpoint url -F serde
+
+cargo add -p uchat_endpoint uuid -F serde,v4,js  
+
+
+just doc
+
+cargo run -p uchat-server
+just serve-api
+just serve-api --help
+just serve-api -- gen-key
+
+just db-reset
+just --list
