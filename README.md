@@ -287,7 +287,7 @@ cargo add -p uchat_endpoint url -F serde
 
 cargo add -p uchat_endpoint uuid -F serde,v4,js  
 
-
+just check
 just doc
 
 cargo run -p uchat-server

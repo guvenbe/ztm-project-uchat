@@ -30,7 +30,7 @@ pub fn set_session(signature: String, id: SessionId, expires: DateTime<Utc>){
 
     document().set_cookie(&cookie).unwrap();
     let cookie = format_cookie(
-        format_kv(uchat_cookie::SESSION_SIGNATURE, id.to_string()),
+        format_kv(uchat_cookie::SESSION_SIGNATURE, signature),
         expires);
 
     document().set_cookie(&cookie).unwrap();
