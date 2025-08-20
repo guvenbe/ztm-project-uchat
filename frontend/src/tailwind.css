@@ -31,6 +31,6 @@
     }
 
     .navbar-border-color {
-        @apply border-slate-600;
+        @apply border-slate-300;
     }
 }
