@@ -1,0 +1,18 @@
+:root {
+  /* Layout variables used by Dioxus components */
+  --navbar-height: 3.8rem;
+  --content-min-width: 300px;
+  --content-max-width: 576px;
+}
+
+/* Helper classes used in the navbar component. We avoid @apply
+   here so this file can be included without a Tailwind build step. */
+.navbar-bg-color {
+  /* Tailwind slate-800 */
+  background-color: #1f2937;
+}
+
+.navbar-border-color {
+  /* Tailwind slate-500 */
+  border-color: #64748b;
+}

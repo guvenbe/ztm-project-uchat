@@ -7,40 +7,53 @@ use dioxus::prelude::*;
 pub fn NewPostPopup(cx: Scope, hide: UseState<bool>) -> Element {
     let hide_class = maybe_class!("hidden", *hide.get());
 
-    const BUTTON_CLASS: &str = "grid grid-cols-[20px_1fr] gap-4 pl-4
-                                justify-center items-center
-                                w-full h-12
-                                border-y navbar-border-color";
+    const BUTTON_CLASS: &str = "flex flex-col items-center justify-center gap-1
+                                w-full cursor-pointer hover:bg-slate-500/40 active:bg-slate-500/60 border-t first:border-t-0 navbar-border-color";
     cx.render(rsx! {
         div {
             class: "flex flex-col
-                    absolute right-0 bottom-[var(--navbar-height)]
-                    w-28 items-center {hide_class}
-                    navbar-bg-color text-white text-sm",
+                    absolute right-0 z-50 pointer-events-auto
+                    items-stretch {hide_class}
+                    navbar-bg-color text-white text-sm shadow-lg border navbar-border-color",
+            style: "bottom: var(--navbar-height); width: calc(100% / 6);",
             div {
                 class: BUTTON_CLASS,
+                style: "height: var(--navbar-height);",
                 onclick: move |_| (),
                 img {
                     class: "invert",
                     src: "/static/icons/icon-poll.svg",
+                    width: "25px",
+                    height: "25px",
                 },
                 "Poll"
             }
             div {
                 class: BUTTON_CLASS,
+                style: "height: var(--navbar-height);",
                 onclick: move |_| (),
                 img {
                     class: "invert",
                     src: "/static/icons/icon-image.svg",
+                    width: "25px",
+                    height: "25px",
                 },
                 "Image"
             }
             div {
                 class: BUTTON_CLASS,
-                onclick: move |_| (),
+                style: "height: var(--navbar-height);",
+                onclick: move |_| {
+                    #[cfg(target_arch = "wasm32")]
+                    {
+                        let _ = web_sys::window().and_then(|w| w.alert_with_message("Chat test").ok());
+                    }
+                },
                 img {
                     class: "invert",
                     src: "/static/icons/icon-messages.svg",
+                    width: "25px",
+                    height: "25px",
                 },
                 "Chat"
             }
@@ -62,7 +75,7 @@ pub fn NavButton<'a>(cx: Scope<'a, NavButtonProps<'a>>) -> Element {
 
     cx.render(rsx! {
         button {
-            class: "cursor-pointer flex flex-col items-center justify-center h-full {selected_bgcolor}",
+            class: "relative cursor-pointer flex flex-col items-center justify-center h-full navbar-bg-color text-white hover:bg-slate-500/40 active:bg-slate-500/60 border-l first:border-l-0 navbar-border-color {selected_bgcolor}",
             onclick: move |ev| cx.props.onclick.call(ev),
             img {
                 class: "invert",
@@ -84,9 +97,9 @@ pub fn Navbar(cx: Scope) -> Element {
 
     cx.render(rsx! {
         nav {
-            class: "max-w-[var(--content-max-width)] h-[var(--navbar-height)]
-                fixed bottom-0 left-0 right-0 mx-auto
+            class: "relative fixed bottom-0 left-0 right-0 w-full
                 border-t navbar-bg-color navbar-border-color",
+            style: "height: var(--navbar-height);",
             div {
                 class: "grid grid-cols-3 justify-around w-full h-full items-center shadow-inner",
                 NavButton {
@@ -106,9 +119,9 @@ pub fn Navbar(cx: Scope) -> Element {
                         let is_hidden = *hide_new_post_popup.get();
                         hide_new_post_popup.set(!is_hidden);
                     }
-                    NewPostPopup { hide: hide_new_post_popup.clone() }
                 }
             }
+            NewPostPopup { hide: hide_new_post_popup.clone() }
         }
     })
 }
