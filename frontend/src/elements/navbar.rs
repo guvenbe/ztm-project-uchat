@@ -1,10 +1,11 @@
 #![allow(non_snake_case)]
 
-use crate::prelude::*;
+use crate::{page::POST_NEW_CHAT, prelude::*};
 use dioxus::prelude::*;
 
 #[inline_props]
 pub fn NewPostPopup(cx: Scope, hide: UseState<bool>) -> Element {
+    let router = use_router(cx);
     let hide_class = maybe_class!("hidden", *hide.get());
 
     const BUTTON_CLASS: &str = "flex flex-col items-center justify-center gap-1
@@ -44,10 +45,8 @@ pub fn NewPostPopup(cx: Scope, hide: UseState<bool>) -> Element {
                 class: BUTTON_CLASS,
                 style: "height: var(--navbar-height);",
                 onclick: move |_| {
-                    #[cfg(target_arch = "wasm32")]
-                    {
-                        let _ = web_sys::window().and_then(|w| w.alert_with_message("Chat test").ok());
-                    }
+                    router.navigate_to(POST_NEW_CHAT);
+                    hide.set(true);
                 },
                 img {
                     class: "invert",

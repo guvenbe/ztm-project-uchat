@@ -11,9 +11,6 @@ pub struct CreateUser {
     pub password: Password,
 }
 
-impl Endpoint for CreateUser {
-    const URL: &'static str = "/account/create";
-}
 
 #[derive(Clone, Deserialize, Serialize)]
 pub struct  CreateUserOk {
@@ -40,7 +37,4 @@ pub struct LoginOk {
     pub email: Option<String>,
     pub profile_image: Option<Url>,
     pub user_id: UserId
-}
-impl Endpoint for Login {
-    const URL: &'static str = "/account/login";
 }

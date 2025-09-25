@@ -9,16 +9,18 @@ use tower_http::cors::CorsLayer;
 use tower_http::trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer};
 use tower_http::LatencyUnit;
 use tracing::Level;
+use uchat_endpoint::post::endpoint::NewPost;
 use uchat_endpoint::Endpoint;
 use uchat_endpoint::user::endpoint::{CreateUser, Login};
-use crate::handler::with_public_handler;
+use crate::handler::{post, with_handler, with_public_handler};
 
 pub fn new_router(state: AppState) -> axum::Router {
     let public_routes = Router::new()
         .route("/", get(move || async { "this is the root page" }))
         .route(CreateUser::URL, post(with_public_handler::<CreateUser>))
         .route(Login::URL, post(with_public_handler::<Login>));
-    let authorized_routes = Router::new();
+    let authorized_routes = Router::new()
+        .route(NewPost::URL, post(with_handler::<NewPost>));
 
     Router::new()
         .merge(public_routes)

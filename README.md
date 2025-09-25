@@ -292,6 +292,7 @@ just doc
 
 cargo run -p uchat-server
 just serve-api
+just serve-frontend  
 just serve-api --help
 just serve-api -- gen-key
 

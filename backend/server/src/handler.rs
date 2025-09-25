@@ -8,7 +8,7 @@ use crate::{
 };
 
 pub mod user;
-mod post;
+pub mod post;
 
 #[async_trait]
 pub trait PublicApiRequest {
