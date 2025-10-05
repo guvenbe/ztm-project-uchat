@@ -2,19 +2,30 @@
 
 use dioxus::prelude::*;
 use dioxus_router::{Route, Router};
-use fermi::use_init_atom_root;
-use crate::elements::Navbar;
-use crate::page;
+use fermi::{use_init_atom_root, AtomRef};
+
+use crate::elements::{
+    toaster::{ToastRoot, Toaster},
+    Navbar,
+};
+pub use crate::prelude::*;
+
+pub static TOASTER: AtomRef<Toaster> = |_| Toaster::default();
 
 pub fn App(cx: Scope) -> Element {
     use_init_atom_root(cx);
+
+    let toaster = use_toaster(cx);
+
     cx.render(rsx! {
-        Router{
-            Route { to: page::ACCOUNT_LOGIN, page::Login {}},
-            Route { to: page::ACCOUNT_REGISTER, page::Register {}},
-            Route { to: page::HOME, page::Home {}},
-            Route { to: page::POST_NEW_CHAT, page::NewChat {}},
-            Navbar{}
+        Router {
+            Route { to: page::ACCOUNT_REGISTER, page::Register {} },
+            Route { to: page::ACCOUNT_LOGIN, page::Login {} },
+            Route { to: page::HOME, page::Home {} },
+            Route { to: page::POST_NEW_CHAT, page::NewChat {} },
+
+            ToastRoot { toaster: toaster },
+            Navbar {}
         }
     })
 }
