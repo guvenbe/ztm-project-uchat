@@ -362,4 +362,4 @@ just --list
 59) fe-toaster-cleanup
 60) nc-toast
 61) post-types
-62) 
+62) trending-endpoint

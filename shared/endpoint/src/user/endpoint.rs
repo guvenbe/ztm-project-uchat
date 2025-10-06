@@ -16,7 +16,7 @@ pub struct CreateUser {
 pub struct  CreateUserOk {
     pub user_id: UserId,
     pub username: Username,
-    
+
     pub session_signature: String,
     pub session_id: SessionId,
     pub session_expires: DateTime<Utc>,
@@ -32,7 +32,7 @@ pub struct LoginOk {
     pub session_signature: String,
     pub session_id: SessionId,
     pub session_expires: DateTime<Utc>,
-    
+
     pub display_name: Option<String>,
     pub email: Option<String>,
     pub profile_image: Option<Url>,
