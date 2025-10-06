@@ -1,18 +1,27 @@
-use crate::AppState;
-use axum::http::HeaderValue;
-use axum::{routing::get, Router};
-use axum::routing::post;
-use hyper::header::CONTENT_TYPE;
-use hyper::Method;
+use axum::{
+    http::HeaderValue,
+    routing::{get, post},
+    Router,
+};
+use hyper::{header::CONTENT_TYPE, Method};
 use tower::ServiceBuilder;
-use tower_http::cors::CorsLayer;
-use tower_http::trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer};
-use tower_http::LatencyUnit;
+use tower_http::{
+    compression::CompressionLayer,
+    cors::CorsLayer,
+    trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer},
+    LatencyUnit,
+};
 use tracing::Level;
-use uchat_endpoint::post::endpoint::NewPost;
-use uchat_endpoint::Endpoint;
-use uchat_endpoint::user::endpoint::{CreateUser, Login};
-use crate::handler::{post, with_handler, with_public_handler};
+use uchat_endpoint::{
+    post::endpoint::{NewPost, TrendingPosts},
+    user::endpoint::{CreateUser, Login},
+    Endpoint,
+};
+
+use crate::{
+    handler::{with_handler, with_public_handler},
+    AppState,
+};
 
 pub fn new_router(state: AppState) -> axum::Router {
     let public_routes = Router::new()
@@ -20,7 +29,8 @@ pub fn new_router(state: AppState) -> axum::Router {
         .route(CreateUser::URL, post(with_public_handler::<CreateUser>))
         .route(Login::URL, post(with_public_handler::<Login>));
     let authorized_routes = Router::new()
-        .route(NewPost::URL, post(with_handler::<NewPost>));
+        .route(NewPost::URL, post(with_handler::<NewPost>))
+        .route(TrendingPosts::URL, post(with_handler::<TrendingPosts>));
 
     Router::new()
         .merge(public_routes)

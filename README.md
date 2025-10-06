@@ -363,3 +363,6 @@ just --list
 60) nc-toast
 61) post-types
 62) trending-endpoint
+63) public-post-1
+64) public-post-2
+65) fe-trending-page
