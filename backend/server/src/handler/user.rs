@@ -89,7 +89,7 @@ impl PublicApiRequest for Login {
     ) -> ApiResult<Self::Response> {
         let _span = tracing::span!(tracing::Level::INFO, "logging in",
                 user = %self.username.as_ref())
-            .entered();
+        .entered();
         let hash = uchat_query::user::get_password_hash(&mut conn, &self.username)?;
         let hash = uchat_crypto::password::deserialize_hash(&hash)?;
 

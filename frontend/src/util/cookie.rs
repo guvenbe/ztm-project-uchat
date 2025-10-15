@@ -3,16 +3,13 @@
 use std::str::FromStr;
 
 use chrono::{DateTime, Duration, Utc};
-use futures::future::ok;
 use uchat_domain::ids::SessionId;
 
 use super::document;
 
-pub fn get_session() -> Option<SessionId>{
+pub fn get_session() -> Option<SessionId> {
     let cookies = document().cookie().unwrap();
-    uchat_cookie::get_from_str(&cookies, "session_id")
-        .and_then(|id| SessionId::from_str(id).ok())
-
+    uchat_cookie::get_from_str(&cookies, "session_id").and_then(|id| SessionId::from_str(id).ok())
 }
 
 pub fn remove_session() {
@@ -23,19 +20,18 @@ pub fn remove_session() {
     document().set_cookie(&cookie).unwrap()
 }
 
-pub fn set_session(signature: String, id: SessionId, expires: DateTime<Utc>){
-    let cookie = format_cookie(
-        format_kv(uchat_cookie::SESSION_ID, id.to_string()),
-        expires);
+pub fn set_session(signature: String, id: SessionId, expires: DateTime<Utc>) {
+    let cookie = format_cookie(format_kv(uchat_cookie::SESSION_ID, id.to_string()), expires);
 
     document().set_cookie(&cookie).unwrap();
+
     let cookie = format_cookie(
         format_kv(uchat_cookie::SESSION_SIGNATURE, signature),
-        expires);
+        expires,
+    );
 
     document().set_cookie(&cookie).unwrap();
 }
-
 
 #[cfg(not(debug_assertions))]
 fn standard_options() -> &'static str {

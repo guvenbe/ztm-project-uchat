@@ -13,8 +13,6 @@ pub use error::QueryError;
 pub mod util;
 pub use util::{AsyncConnection, AsyncConnectionPool, OwnedAsyncConnection};
 
-pub mod user;
-pub mod session;
 pub mod post;
-
-use uchat_domain::ids::*;
+pub mod session;
+pub mod user;

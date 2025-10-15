@@ -4,8 +4,7 @@ use dioxus::prelude::*;
 use uchat_domain::UserFacingError;
 
 use crate::{
-    elements::{keyed_notification_box::KeyedNotifications, keyed_notification_box::KeyedNotificationBox},
-
+    elements::{keyed_notification_box::KeyedNotifications, KeyedNotificationBox},
     fetch_json,
     prelude::*,
     util::ApiClient,

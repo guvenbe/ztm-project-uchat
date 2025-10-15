@@ -1,6 +1,8 @@
-use axum::http::StatusCode;
-use axum::response::{IntoResponse, Response};
-use axum::Json;
+use axum::{
+    response::{IntoResponse, Response},
+    Json,
+};
+use hyper::StatusCode;
 
 pub type ApiResult<T> = std::result::Result<T, ApiError>;
 
@@ -20,12 +22,13 @@ pub fn err_response<T: Into<String>>(code: StatusCode, msg: T) -> Response {
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
         if let Some(code) = self.code {
-            //return response
-            return err_response(code, format!("{}",self.err));
+            return err_response(code, format!("{}", self.err));
         }
-        err_response(StatusCode::INTERNAL_SERVER_ERROR,"server error")
+
+        err_response(StatusCode::INTERNAL_SERVER_ERROR, "server error")
     }
 }
+
 impl<E> From<E> for ApiError
 where
     E: Into<color_eyre::Report>,

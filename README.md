@@ -366,3 +366,5 @@ just --list
 63) public-post-1
 64) public-post-2
 65) fe-trending-page
+66) post-manager
+67) populate-posts

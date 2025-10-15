@@ -1,7 +1,5 @@
 pub mod api_client;
 pub mod cookie;
-use core::error;
-
 pub use api_client::ApiClient;
 
 use serde::Deserialize;
@@ -15,7 +13,7 @@ pub enum RequestError {
 
     #[error("request timeout")]
     Timeout,
-    
+
     #[error("bad request: {0}")]
     BadRequest(#[from] uchat_endpoint::RequestFailed),
 }

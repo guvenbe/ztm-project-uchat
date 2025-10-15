@@ -10,6 +10,10 @@
 }
 
 @layer components {
+    .actionbar-icon {
+        @apply w-8 h-8;
+    }
+
     .btn {
         @apply px-4 py-2 rounded font-semibold text-sm text-white bg-slate-800 border border-slate-500 hover:bg-slate-500/40 active:bg-slate-500/60 cursor-pointer shadow-sm;
     }

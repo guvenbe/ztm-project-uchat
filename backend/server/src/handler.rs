@@ -7,8 +7,8 @@ use crate::{
     AppState,
 };
 
-pub mod user;
 pub mod post;
+pub mod user;
 
 #[async_trait]
 pub trait PublicApiRequest {

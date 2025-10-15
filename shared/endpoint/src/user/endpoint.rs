@@ -11,9 +11,8 @@ pub struct CreateUser {
     pub password: Password,
 }
 
-
 #[derive(Clone, Deserialize, Serialize)]
-pub struct  CreateUserOk {
+pub struct CreateUserOk {
     pub user_id: UserId,
     pub username: Username,
 
@@ -21,6 +20,7 @@ pub struct  CreateUserOk {
     pub session_id: SessionId,
     pub session_expires: DateTime<Utc>,
 }
+
 #[derive(Clone, Deserialize, Serialize)]
 pub struct Login {
     pub username: Username,
@@ -36,5 +36,5 @@ pub struct LoginOk {
     pub display_name: Option<String>,
     pub email: Option<String>,
     pub profile_image: Option<Url>,
-    pub user_id: UserId
+    pub user_id: UserId,
 }

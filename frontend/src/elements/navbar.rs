@@ -6,6 +6,7 @@ use dioxus::prelude::*;
 #[inline_props]
 pub fn NewPostPopup(cx: Scope, hide: UseState<bool>) -> Element {
     let router = use_router(cx);
+
     let hide_class = maybe_class!("hidden", *hide.get());
 
     const BUTTON_CLASS: &str = "flex flex-col items-center justify-center gap-1

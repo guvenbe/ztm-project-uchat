@@ -51,7 +51,7 @@ pub fn new(
     }
 }
 
-pub fn get(conn: &mut PgConnection, session_id: SessionId) -> Result<Option<Session>, DieselError>{
+pub fn get(conn: &mut PgConnection, session_id: SessionId) -> Result<Option<Session>, DieselError> {
     use crate::schema::web;
     web::table
         .filter(web::id.eq(session_id))
