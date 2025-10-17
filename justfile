@@ -1,10 +1,7 @@
-TRUNK_CONFIG_FILE := if os() == "windows" { "Trunk.win.toml" } else { "Trunk.toml" }
-TRUNK_RELEASE_CONFIG_FILE := if os() == "windows" { "Trunk-release.win.toml" } else { "Trunk.toml" }
-
 # build in release mode
 build:
     # build frontend
-    trunk --config {{TRUNK_RELEASE_CONFIG_FILE}} build
+    trunk --config Trunk-release.toml build
     # build backend
     cargo build --release --workspace --exclude frontend
 
@@ -29,11 +26,11 @@ doc *ARGS:
 
 # run frontend devserver. use --open to open a new browser
 serve-frontend *ARGS:
-    trunk --config {{TRUNK_CONFIG_FILE}} serve {{ ARGS }}
+    trunk serve {{ ARGS }}
 
 # run API server
 serve-api *ARGS:
-    cargo run -p uchat_server {{ ARGS }}
+    watchexec -r -i "frontend/**" -i "target/**" --exts rs,sql,toml cargo run -p uchat_server {{ ARGS }}
 
 # set up project dependencies
 init:
@@ -56,4 +53,3 @@ db-reset:
 # create a new database migration
 db-new-migration NAME:
     diesel migration generate {{ NAME }}
-

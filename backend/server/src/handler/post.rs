@@ -6,10 +6,10 @@ use uchat_domain::{ids::*, Username};
 use uchat_endpoint::{
     post::{
         endpoint::{
-            Bookmark, BookmarkOk, NewPost, NewPostOk, React, ReactOk, TrendingPosts,
-            TrendingPostsOk,
+            Bookmark, BookmarkOk, Boost, BoostOk, NewPost, NewPostOk, React, ReactOk,
+            TrendingPosts, TrendingPostsOk,
         },
-        types::{BookmarkAction, LikeStatus, PublicPost},
+        types::{BookmarkAction, BoostAction, LikeStatus, PublicPost},
     },
     user::endpoint::{CreateUser, CreateUserOk, Login, LoginOk},
     RequestFailed,
@@ -33,6 +33,7 @@ pub fn to_public(
     use uchat_query::user as query_user;
 
     if let Ok(mut content) = serde_json::from_value(post.content.0) {
+        let aggregate_reactions = query_post::aggregate_reactions(conn, post.id)?;
         Ok(PublicPost {
             id: post.id,
             by_user: {
@@ -55,17 +56,33 @@ pub fn to_public(
                     None => None,
                 }
             },
-            like_status: LikeStatus::NoReaction,
+            like_status: {
+                match session {
+                    Some(session) => {
+                        match query_post::get_reaction(conn, post.id, session.user_id)? {
+                            Some(reaction) if reaction.like_status == -1 => LikeStatus::Dislike,
+                            Some(reaction) if reaction.like_status == 1 => LikeStatus::Like,
+                            _ => LikeStatus::NoReaction,
+                        }
+                    }
+                    None => LikeStatus::NoReaction,
+                }
+            },
             bookmarked: {
                 match session {
                     Some(session) => query_post::get_bookmark(conn, session.user_id, post.id)?,
                     None => false,
                 }
             },
-            boosted: false,
-            likes: 0,
-            dislikes: 0,
-            boosts: 0,
+            boosted: {
+                match session {
+                    Some(session) => query_post::get_boost(conn, session.user_id, post.id)?,
+                    None => false,
+                }
+            },
+            likes: aggregate_reactions.likes,
+            dislikes: aggregate_reactions.dislikes,
+            boosts: aggregate_reactions.boosts,
         })
     } else {
         Err(ApiError {
@@ -173,12 +190,41 @@ impl AuthorizedApiRequest for React {
 
         uchat_query::post::react(&mut conn, reaction)?;
 
+        let aggregate_reactions = uchat_query::post::aggregate_reactions(&mut conn, self.post_id)?;
+
         Ok((
             StatusCode::OK,
             Json(ReactOk {
                 like_status: self.like_status,
-                likes: 0,
-                dislikes: 0,
+                likes: aggregate_reactions.likes,
+                dislikes: aggregate_reactions.dislikes,
+            }),
+        ))
+    }
+}
+
+#[async_trait]
+impl AuthorizedApiRequest for Boost {
+    type Response = (StatusCode, Json<BoostOk>);
+    async fn process_request(
+        self,
+        DbConnection(mut conn): DbConnection,
+        session: UserSession,
+        state: AppState,
+    ) -> ApiResult<Self::Response> {
+        match self.action {
+            BoostAction::Add => {
+                uchat_query::post::boost(&mut conn, session.user_id, self.post_id, Utc::now())?;
+            }
+            BoostAction::Remove => {
+                uchat_query::post::delete_boost(&mut conn, session.user_id, self.post_id)?;
+            }
+        }
+
+        Ok((
+            StatusCode::OK,
+            Json(BoostOk {
+                status: self.action,
             }),
         ))
     }

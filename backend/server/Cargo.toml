@@ -43,3 +43,4 @@ uchat_endpoint ={path = "../../shared/endpoint"}
 uchat_domain = {path = "../../shared/domain"}
 uchat_query = { path = "../query" }
 log = "0.4.27"
+diesel = "2.0.3"

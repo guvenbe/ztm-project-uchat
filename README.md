@@ -299,6 +299,18 @@ just serve-api -- gen-key
 just db-reset
 just --list
 
+Install watchexec (optional, for file watching during development):
+- macOS (recommended): brew install watchexec
+- macOS (if using Cargo): ensure Xcode Command Line Tools are installed: xcode-select --install; then either use a prebuilt binary with cargo binstall watchexec-cli, or avoid Cocoa build issues by disabling notifications: cargo install watchexec-cli --locked --no-default-features
+- Linux: cargo install watchexec-cli --locked (or use your package manager)
+- Windows: cargo install watchexec-cli --locked (or winget install watchexec.watchexec)
+
+Troubleshooting on macOS if you see "could not build module 'Cocoa'":
+- Install Command Line Tools: xcode-select --install
+- Ensure the SDK is set: export SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
+- Try: cargo install watchexec-cli --locked --no-default-features
+- Or prefer Homebrew: brew install watchexec
+
 
 
 1) fe_register
