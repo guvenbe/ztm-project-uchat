@@ -53,3 +53,4 @@ db-reset:
 # create a new database migration
 db-new-migration NAME:
     diesel migration generate {{ NAME }}
+

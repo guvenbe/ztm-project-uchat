@@ -1,4 +1,4 @@
-use diesel::{ConnectionError, PgConnection};
+use diesel::{Connection, ConnectionError, PgConnection};
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use std::{error::Error, time::Duration};
 
@@ -6,7 +6,40 @@ use crate::error::QueryError;
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("../migrations");
 
-type AsyncConnectionManager = bb8_diesel::DieselConnectionManager<PgConnection>;
+#[derive(Clone, Debug)]
+pub struct PgConnectionManager {
+    url: String,
+}
+
+impl PgConnectionManager {
+    fn new<S: Into<String>>(url: S) -> Self {
+        Self { url: url.into() }
+    }
+}
+
+#[async_trait::async_trait]
+impl bb8::ManageConnection for PgConnectionManager {
+    type Connection = PgConnection;
+    type Error = ConnectionError;
+
+    async fn connect(&self) -> Result<Self::Connection, Self::Error> {
+        let url = self.url.clone();
+        tokio::task::spawn_blocking(move || PgConnection::establish(&url))
+            .await
+            .map_err(|e| ConnectionError::BadConnection(e.to_string()))?
+    }
+
+    async fn is_valid(&self, _conn: &mut Self::Connection) -> Result<(), Self::Error> {
+        // Optionally run a simple query here. Keep it lightweight for now.
+        Ok(())
+    }
+
+    fn has_broken(&self, _conn: &mut Self::Connection) -> bool {
+        false
+    }
+}
+
+type AsyncConnectionManager = PgConnectionManager;
 
 pub type AsyncConnection<'a> = bb8::PooledConnection<'a, AsyncConnectionManager>;
 pub type OwnedAsyncConnection = bb8::PooledConnection<'static, AsyncConnectionManager>;
@@ -69,7 +102,7 @@ pub fn connect<S: AsRef<str>>(url: S) -> Result<PgConnection, ConnectionError> {
 /// ```
 pub async fn new_async_pool<S: AsRef<str>>(url: S) -> Result<AsyncConnectionPool, QueryError> {
     let url = url.as_ref();
-    let manager = bb8_diesel::DieselConnectionManager::<PgConnection>::new(url);
+    let manager = PgConnectionManager::new(url.to_string());
     bb8::Pool::builder()
         .test_on_check_out(true)
         .connection_timeout(Duration::from_secs(10))

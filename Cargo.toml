@@ -1,4 +1,5 @@
 [workspace]
+resolver = "2"
 default-members = [
   "backend/server",
   "backend/crypto",
@@ -6,7 +7,7 @@ default-members = [
   "frontend",
   "shared/cookie",
   "shared/domain",
-  "shared/endpoint"
+  "shared/endpoint",
 ]
 members = [
   "backend/server",
@@ -16,5 +17,6 @@ members = [
   "shared/cookie",
   "shared/domain",
   "shared/endpoint",
-  "tools/project-init", "shared/domain",
+  "tools/project-init",
 ]
+
