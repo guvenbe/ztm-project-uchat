@@ -3,7 +3,9 @@ use serde::{Deserialize, Serialize};
 use uchat_domain::{ids::*, Password, Username};
 use url::Url;
 
-use crate::Endpoint;
+use crate::{post::types::PublicPost, Update};
+
+use super::types::{FollowAction, PublicUserProfile};
 
 #[derive(Clone, Deserialize, Serialize)]
 pub struct CreateUser {
@@ -37,4 +39,50 @@ pub struct LoginOk {
     pub email: Option<String>,
     pub profile_image: Option<Url>,
     pub user_id: UserId,
+}
+
+#[derive(Clone, Deserialize, Serialize)]
+pub struct GetMyProfile;
+
+#[derive(Clone, Deserialize, Serialize)]
+pub struct GetMyProfileOk {
+    pub display_name: Option<String>,
+    pub email: Option<String>,
+    pub profile_image: Option<Url>,
+    pub user_id: UserId,
+}
+
+#[derive(Clone, Deserialize, Serialize)]
+pub struct UpdateProfile {
+    pub display_name: Update<String>,
+    pub email: Update<String>,
+    pub profile_image: Update<String>,
+    pub password: Update<Password>,
+}
+
+#[derive(Clone, Deserialize, Serialize)]
+pub struct UpdateProfileOk {
+    pub profile_image: Option<Url>,
+}
+
+#[derive(Clone, Deserialize, Serialize)]
+pub struct ViewProfile {
+    pub for_user: UserId,
+}
+
+#[derive(Clone, Deserialize, Serialize)]
+pub struct ViewProfileOk {
+    pub profile: PublicUserProfile,
+    pub posts: Vec<PublicPost>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
+pub struct FollowUser {
+    pub user_id: UserId,
+    pub action: FollowAction,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
+pub struct FollowUserOk {
+    pub status: FollowAction,
 }

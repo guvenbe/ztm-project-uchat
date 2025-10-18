@@ -1,5 +1,4 @@
 [workspace]
-resolver = "2"
 default-members = [
   "backend/server",
   "backend/crypto",
@@ -19,4 +18,3 @@ members = [
   "shared/endpoint",
   "tools/project-init",
 ]
-

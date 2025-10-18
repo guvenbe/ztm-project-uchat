@@ -1,13 +1,10 @@
 #![allow(non_snake_case)]
 
-pub mod bookmarked;
-pub mod liked;
-
 use crate::prelude::*;
 
 use dioxus::prelude::*;
 
-pub fn Home(cx: Scope) -> Element {
+pub fn HomeBookmarked(cx: Scope) -> Element {
     let toaster = use_toaster(cx);
     let api_client = ApiClient::global();
     let post_manager = use_post_manager(cx);
@@ -16,12 +13,12 @@ pub fn Home(cx: Scope) -> Element {
     let _fetch_posts = {
         to_owned![api_client, toaster, post_manager];
         use_future(cx, (), |_| async move {
-            use uchat_endpoint::post::endpoint::{HomePosts, HomePostsOk};
+            use uchat_endpoint::post::endpoint::{BookmarkedPosts, BookmarkedPostsOk};
             toaster
                 .write()
                 .info("Retrieving posts...", chrono::Duration::seconds(3));
             post_manager.write().clear();
-            let response = fetch_json!(<HomePostsOk>, api_client, HomePosts);
+            let response = fetch_json!(<BookmarkedPostsOk>, api_client, BookmarkedPosts);
             match response {
                 Ok(res) => post_manager.write().populate(res.posts.into_iter()),
                 Err(e) => toaster.write().error(
@@ -49,7 +46,7 @@ pub fn Home(cx: Scope) -> Element {
                     class: "flex flex-col text-center justify-center
                     h-[calc(100vh_-_var(--navbar-height)_-_var(--appbar-height))]",
                     span {
-                        "Check out what's ", TrendingLink ", and follow some users to get started."
+                        "You don't have any bookmarked posts yet. Check out what's ", TrendingLink ", and follow some users to get started."
                     }
                 }
             }
@@ -60,7 +57,7 @@ pub fn Home(cx: Scope) -> Element {
 
     cx.render(rsx! {
         Appbar {
-            title: "Home",
+            title: "Bookmarked",
             AppbarImgButton {
                 click_handler: move |_| router.navigate_to(page::HOME_LIKED),
                 img: "/static/icons/icon-like.svg",
@@ -68,18 +65,18 @@ pub fn Home(cx: Scope) -> Element {
                 title: "Show liked posts",
             },
             AppbarImgButton {
-                click_handler: move |_| router.navigate_to(page::HOME_BOOKMARKED),
+                click_handler: move |_| (),
                 img: "/static/icons/icon-bookmark.svg",
                 label: "Saved",
                 title: "Show bookmarked posts",
+                disabled: true,
+                append_class: appbar::BUTTON_SELECTED,
             },
             AppbarImgButton {
-                click_handler: move |_| (),
+                click_handler: move |_| router.navigate_to(page::HOME),
                 img: "/static/icons/icon-home.svg",
                 label: "Home",
                 title: "Go to the home page",
-                disabled: true,
-                append_class: appbar::BUTTON_SELECTED,
             },
 
         },

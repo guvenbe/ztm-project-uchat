@@ -1,4 +1,5 @@
 use axum::{
+    extract::DefaultBodyLimit,
     http::HeaderValue,
     routing::{get, post},
     Router,
@@ -6,15 +7,18 @@ use axum::{
 use hyper::{header::CONTENT_TYPE, Method};
 use tower::ServiceBuilder;
 use tower_http::{
-    compression::CompressionLayer,
     cors::CorsLayer,
+    limit::RequestBodyLimitLayer,
     trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer},
     LatencyUnit,
 };
 use tracing::Level;
 use uchat_endpoint::{
-    post::endpoint::{Bookmark, Boost, NewPost, React, TrendingPosts},
-    user::endpoint::{CreateUser, Login},
+    post::endpoint::{
+        Bookmark, BookmarkedPosts, Boost, HomePosts, LikedPosts, NewPost, React, TrendingPosts,
+        Vote,
+    },
+    user::endpoint::{CreateUser, FollowUser, GetMyProfile, Login, UpdateProfile, ViewProfile},
     Endpoint,
 };
 
@@ -39,8 +43,18 @@ pub fn new_router(state: AppState) -> axum::Router {
         .route(NewPost::URL, post(with_handler::<NewPost>))
         .route(Bookmark::URL, post(with_handler::<Bookmark>))
         .route(Boost::URL, post(with_handler::<Boost>))
+        .route(Vote::URL, post(with_handler::<Vote>))
         .route(React::URL, post(with_handler::<React>))
-        .route(TrendingPosts::URL, post(with_handler::<TrendingPosts>));
+        .route(TrendingPosts::URL, post(with_handler::<TrendingPosts>))
+        .route(HomePosts::URL, post(with_handler::<HomePosts>))
+        .route(LikedPosts::URL, post(with_handler::<LikedPosts>))
+        .route(GetMyProfile::URL, post(with_handler::<GetMyProfile>))
+        .route(UpdateProfile::URL, post(with_handler::<UpdateProfile>))
+        .route(ViewProfile::URL, post(with_handler::<ViewProfile>))
+        .route(FollowUser::URL, post(with_handler::<FollowUser>))
+        .route(BookmarkedPosts::URL, post(with_handler::<BookmarkedPosts>))
+        .layer(DefaultBodyLimit::disable())
+        .layer(RequestBodyLimitLayer::new(8 * 1024 * 1024));
 
     Router::new()
         .merge(public_routes)
